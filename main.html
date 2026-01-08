@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terima Kasih Ayah & Bunda</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #d63384; /* Warna lebih dalam */
+            --secondary: #f8d7da;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
+            /* Background netral lembut agar fokus ke animasi */
+            min-height: 100vh;
+            color: #2d3436;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Particles (Lembut) */
+        .bg-particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+            background-image: radial-gradient(#d63384 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.1;
+        }
+
+        /* Mouse Heart Trail */
+        .mouse-heart {
+            position: fixed; color: var(--primary); pointer-events: none;
+            z-index: 9999; animation: floatUp 1.2s ease-out forwards;
+            font-size: 1.2rem;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
+        }
+
+        /* --- Intro Amplop --- */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; background: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
+            transition: opacity 0.8s ease;
+        }
+        .envelope-box {
+            width: 300px; height: 200px;
+            background: var(--primary);
+            position: relative; cursor: pointer;
+            box-shadow: 0 20px 60px rgba(214, 51, 132, 0.3);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Great Vibes', cursive; font-size: 2rem;
+            color: white; border-radius: 12px;
+            transition: transform 0.3s; border: 2px solid white;
+        }
+        .envelope-box:hover { transform: scale(1.05); }
+        
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 2001;
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 800px; margin: 50px auto; padding: 20px;
+            opacity: 0; transform: translateY(30px);
+            transition: all 1s ease; display: none;
+        }
+
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 40px; margin-bottom: 40px;
+            box-shadow: var(--shadow); text-align: center;
+            position: relative; overflow: hidden;
+        }
+
+        h1 { font-family: 'Great Vibes', cursive; font-size: 3.5rem; color: var(--primary); margin-bottom: 10px; line-height: 1.2; }
+        p { color: #636e72; margin-bottom: 20px; }
+
+        /* --- Carousel Animasi --- */
+        .carousel-wrapper {
+            position: relative; width: 100%; max-width: 400px; margin: 0 auto;
+            background: rgba(255,255,255,0.5); /* Sedikit background di belakang animasi */
+            border-radius: 15px; padding: 10px;
+        }
+        .lottie-slide {
+            display: none; width: 100%; animation: fadeIn 0.8s ease;
+        }
+        .lottie-slide.active { display: block; }
+        
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: white; border: none; width: 40px; height: 40px;
+            border-radius: 50%; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: var(--primary); transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; z-index: 10;
+        }
+        .nav-btn:hover { background: var(--primary); color: white; }
+        .prev-btn { left: -15px; }
+        .next-btn { right: -15px; }
+
+        /* --- Interactive Reason Cards --- */
+        .reason-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .reason-card {
+            background: rgba(255,255,255,0.6); padding: 25px; border-radius: 15px;
+            cursor: pointer; transition: all 0.4s;
+            border: 1px solid transparent;
+        }
+        .reason-card:hover { transform: translateY(-5px); background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--primary); }
+        .reason-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 15px; }
+        .reason-text { max-height: 0; overflow: hidden; transition: max-height 0.6s ease; font-size: 0.95rem; color: #555; }
+        .reason-card.active .reason-text { max-height: 100px; margin-top: 15px; }
+
+        /* --- Love Meter Game --- */
+        .meter-box { text-align: center; }
+        .heart-container { font-size: 7rem; position: relative; display: inline-block; margin: 20px 0; line-height: 1; }
+        .heart-fill-anim {
+            position: absolute; top: 0; left: 0; width: 100%; overflow: hidden;
+            color: var(--primary); transition: height 0.2s; z-index: 2;
+        }
+        .heart-bg { color: #eee; position: relative; z-index: 1; }
+        
+        .fill-btn {
+            background: var(--primary); color: white; border: none;
+            padding: 15px 35px; border-radius: 50px; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 5px 20px rgba(214, 51, 132, 0.3);
+            transition: transform 0.1s, box-shadow 0.3s; font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+        .fill-btn:hover { box-shadow: 0 8px 25px rgba(214, 51, 132, 0.4); }
+        .fill-btn:active { transform: scale(0.95); }
+
+        .final-msg {
+            margin-top: 20px; font-weight: bold; color: var(--primary);
+            opacity: 0; transition: opacity 0.5s; font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; } .glass-card { padding: 25px; }
+            .heart-container { font-size: 5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-particles"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Intro -->
+    <section id="intro-screen">
+        <div class="envelope-box" onclick="openCard()">
+            <span>Buka Surat</span>
+        </div>
+    </section>
+
+    <!-- Main -->
+    <div class="container" id="main-content">
+        
+        <!-- Header: Keluarga Menyusuri Jalan Hidup -->
+        <div class="glass-card">
+            <h1>Untuk Ayah & Bunda</h1>
+            <!-- Animasi: Family Walking (Perjalanan hidup bersama) -->
+            <lottie-player 
+                src="https://assets4.lottiefiles.com/packages/lf20_a6kqrqj3.json" 
+                background="transparent" speed="1" style="width: 100%; height: 300px;" 
+                loop autoplay>
+            </lottie-player>
+            <p>Terima kasih sudah menemaniku melewati setiap langkah hidup.</p>
+        </div>
+
+        <!-- Carousel: Metafora Cinta Orang Tua -->
+        <div class="glass-card">
+            <h2>Makna Cinta Kalian</h2>
+            <p style="margin-bottom: 15px; font-size: 0.9rem;">Geser untuk melihat peran kalian bagiku</p>
+            
+            <div class="carousel-wrapper">
+                <!-- Slide 1: Ibu / Menyiram Tanaman (Merawat) -->
+                <div class="lottie-slide active">
+                    <lottie-player 
+                        src="https://assets3.lottiefiles.com/packages/lf20_xk7j6y9.json" 
+                        background="transparent" speed="1" style="width: 100%; height: 300px;" loop>
+                    </lottie-player>
+                    <p><strong>Kasih Ibu:</strong> Seperti air yang menyiram tanaman, kau merawatku dengan sabar hingga aku tumbuh.</p>
+                </div>
+
+                <!-- Slide 2: Ayah / Payung (Pelindung) -->
+                <div class="lottie-slide">
+                    <lottie-player 
+                        src="https://assets2.lottiefiles.com/packages/lf20_uxk6l7.json" 
+                        background="transparent" speed="1" style="width: 100%; height: 300px;" loop>
+                    </lottie-player>
+                    <p><strong>Perlindungan Ayah:</strong> Kau adalah payung yang selalu menaungi hujan badai hidupku.</p>
+                </div>
+
+                <!-- Slide 3: Terima Kasih / Memberi Bunga (Hormat) -->
+                <div class="lottie-slide">
+                    <lottie-player 
+                        src="https://assets1.lottiefiles.com/packages/lf20_hx5i3b.json" 
+                        background="transparent" speed="1" style="width: 100%; height: 300px;" loop>
+                    </lottie-player>
+                    <p><strong>Ucapan Terima Kasih:</strong> Aku memberikan sebungkus cinta untuk balasan semua pengorbananmu.</p>
+                </div>
+
+                <button class="nav-btn prev-btn" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="nav-btn next-btn" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Alasan (Click Reveal) -->
+        <div class="glass-card">
+            <h2>Kenapa Aku Berterima Kasih?</h2>
+            <br>
+            <div class="reason-grid">
+                <div class="reason-card" onclick="toggleReason(this)">
+                    <i class="fas fa-praying-hands reason-icon"></i>
+                    <h3>Doa Kalian</h3>
+                    <div class="reason-text">Setiap doa yang panjatkan menjadi nyawa dalam setiap langkahku hari ini.</div>
+                </div>
+                <div class="reason-card" onclick="toggleReason(this)">
+                    <i class="fas fa-house-user reason-icon"></i>
+                    <h3>Rumah Kalian</h3>
+                    <div class="reason-text">Tempat pulang yang paling nyaman di seluruh dunia ini.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Love Meter -->
+        <div class="glass-card">
+            <h2>Isi Cinta Untuk Mereka</h2>
+            <p>Tekan tombol sampai penuh!</p>
+            <div class="meter-box">
+                <div class="heart-container">
+                    <i class="fas fa-heart heart-fill-anim" id="fill-heart"></i>
+                    <i class="fas fa-heart heart-bg"></i>
+                </div>
+                <br>
+                <button class="fill-btn" onclick="fillLove()">Kirim Sayang ❤️</button>
+                <div class="final-msg" id="final-msg">
+                    Terima kasih untuk segalanya, Ayah & Bunda! ❤️
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DI BAWAH AGAR STABIL -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    
+    <script>
+        // --- 1. Mouse Trail Effect ---
+        document.addEventListener('mousemove', function(e) {
+            if(Math.random() > 0.85) { 
+                const heart = document.createElement('div');
+                heart.classList.add('mouse-heart');
+                heart.innerHTML = '<i class="fas fa-heart"></i>';
+                heart.style.left = e.pageX + 'px';
+                heart.style.top = e.pageY + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+            }
+        });
+
+        // --- 2. Open & Confetti ---
+        function openCard() {
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
+            
+            intro.style.opacity = '0';
+            fireConfetti();
+            
+            setTimeout(() => {
+                intro.style.display = 'none';
+                main.style.display = 'block';
+                setTimeout(() => { 
+                    main.style.opacity = '1'; 
+                    main.style.transform = 'translateY(0)'; 
+                }, 50);
+            }, 800);
+        }
+
+        // --- 3. Confetti Logic (Canvas) ---
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        let particles = [];
+        const colors = ['#d63384', '#f8d7da', '#a2d2ff', '#ffc8dd'];
+
+        function fireConfetti() {
+            for(let i=0; i<120; i++) {
+                particles.push({
+                    x: window.innerWidth / 2, y: window.innerHeight / 2,
+                    size: Math.random() * 8 + 4, color: colors[Math.floor(Math.random() * colors.length)],
+                    speedX: Math.random() * 12 - 6, speedY: Math.random() * 12 - 6,
+                    gravity: 0.15
+                });
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.x += p.speedX; p.y += p.speedY; p.speedY += p.gravity;
+                ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                if(p.y > canvas.height) particles.splice(index, 1);
+            });
+            if(particles.length > 0) requestAnimationFrame(animateConfetti);
+        }
+
+        // --- 4. Carousel Logic ---
+        let slideIndex = 0;
+        function moveSlide(n) {
+            const slides = document.querySelectorAll('.lottie-slide');
+            slides[slideIndex].classList.remove('active');
+            
+            slideIndex += n;
+            if(slideIndex >= slides.length) slideIndex = 0;
+            if(slideIndex < 0) slideIndex = slides.length - 1;
+            
+            slides[slideIndex].classList.add('active');
+            // Reset animation to start
+            const player = slides[slideIndex].querySelector('lottie-player');
+            if(player) {
+                player.seek(0);
+                player.play();
+            }
+        }
+
+        // --- 5. Toggle Reason ---
+        function toggleReason(el) {
+            el.classList.toggle('active');
+        }
+
+        // --- 6. Love Meter Logic ---
+        let lovePct = 0;
+        function fillLove() {
+            if(lovePct < 100) {
+                lovePct += 5;
+                if(lovePct > 100) lovePct = 100;
+                document.getElementById('fill-heart').style.width = lovePct + '%';
+                
+                const btn = document.querySelector('.fill-btn');
+                btn.style.transform = 'scale(0.95)';
+                setTimeout(() => btn.style.transform = 'scale(1)', 100);
+
+                if(lovePct === 100) {
+                    document.getElementById('final-msg').style.opacity = '1';
+                    fireConfetti();
+                }
+            } else {
+                lovePct = 0;
+                document.getElementById('fill-heart').style.width = '0%';
+                document.getElementById('final-msg').style.opacity = '0';
+            }
+        }
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
